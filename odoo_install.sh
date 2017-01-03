@@ -32,6 +32,8 @@ IS_ENTERPRISE="False"
 #set the superadmin password
 OE_SUPERADMIN="admin"
 OE_CONFIG="${OE_USER}-server"
+# Set ubuntu's code name for the version
+DISTRONAME=$(awk '/DISTRIB_CODENAME=/' /etc/*-release | sed 's/DISTRIB_CODENAME=//' | sed 's/[.]0/./')
 
 ##
 ###  WKHTMLTOPDF download links
@@ -45,6 +47,11 @@ WKHTMLTOX_X32=http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_l
 # Update Server
 #--------------------------------------------------
 echo -e "\n---- Update Server ----"
+# Set up the Postgres source repository for apt
+sudo touch /etc/apt/sources.list.d/pgdg.list
+echo 'deb http://apt.postgresql.org/pub/repos/apt/ '$DISTRONAME'-pgdg main' > /etc/apt/sources.list.d/pgdg.list
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+# Actualize the software across the system
 sudo apt-get update
 sudo apt-get upgrade -y
 
